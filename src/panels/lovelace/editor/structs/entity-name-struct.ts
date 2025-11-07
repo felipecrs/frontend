@@ -11,6 +11,7 @@ const entityNameItemStruct = union([
       literal("device"),
       literal("area"),
       literal("floor"),
+      literal("integration"),
     ]),
   }),
   string(),

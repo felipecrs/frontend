@@ -39,9 +39,21 @@ const rowRenderer: ComboBoxLitRenderer<EntityNameOption> = (item) => html`
   </ha-combo-box-item>
 `;
 
-const KNOWN_TYPES = new Set(["entity", "device", "area", "floor"]);
+const KNOWN_TYPES = new Set([
+  "entity",
+  "device",
+  "area",
+  "floor",
+  "integration",
+]);
 
-const UNIQUE_TYPES = new Set(["entity", "device", "area", "floor"]);
+const UNIQUE_TYPES = new Set([
+  "entity",
+  "device",
+  "area",
+  "floor",
+  "integration",
+]);
 
 const formatOptionValue = (item: EntityNameItem) => {
   if (item.type === "text" && item.text) {
@@ -112,6 +124,7 @@ export class HaEntityNamePicker extends LitElement {
     if (context.device) options.add("device");
     if (context.area) options.add("area");
     if (context.floor) options.add("floor");
+    if (context.entity?.platform) options.add("integration");
     return options;
   });
 
@@ -123,7 +136,7 @@ export class HaEntityNamePicker extends LitElement {
     const types = this._validTypes(entityId);
 
     const items = (
-      ["entity", "device", "area", "floor"] as const
+      ["entity", "device", "area", "floor", "integration"] as const
     ).map<EntityNameOption>((name) => {
       const stateObj = this.hass.states[entityId];
       const isValid = types.has(name);

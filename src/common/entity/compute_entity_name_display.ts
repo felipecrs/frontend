@@ -1,4 +1,5 @@
 import type { HassEntity } from "home-assistant-js-websocket";
+import type { LocalizeFunc } from "../translations/localize";
 import type { HomeAssistant } from "../../types";
 import { ensureArray } from "../array/ensure-array";
 import { computeAreaName } from "./compute_area_name";
@@ -6,6 +7,7 @@ import { computeDeviceName } from "./compute_device_name";
 import { computeEntityName, entityUseDeviceName } from "./compute_entity_name";
 import { computeFloorName } from "./compute_floor_name";
 import { getEntityContext } from "./context/get_entity_context";
+import { domainToName } from "../../data/integration";
 
 const DEFAULT_SEPARATOR = " ";
 
@@ -16,7 +18,7 @@ export const DEFAULT_ENTITY_NAME = [
 
 export type EntityNameItem =
   | {
-      type: "entity" | "device" | "area" | "floor";
+      type: "entity" | "device" | "area" | "floor" | "integration";
     }
   | {
       type: "text";
@@ -34,7 +36,8 @@ export const computeEntityNameDisplay = (
   devices: HomeAssistant["devices"],
   areas: HomeAssistant["areas"],
   floors: HomeAssistant["floors"],
-  options?: EntityNameOptions
+  options?: EntityNameOptions,
+  localize?: LocalizeFunc
 ) => {
   let items = ensureArray(name || DEFAULT_ENTITY_NAME);
 
@@ -61,7 +64,8 @@ export const computeEntityNameDisplay = (
     entities,
     devices,
     areas,
-    floors
+    floors,
+    localize
   );
 
   // If after processing there is only one name, return that
@@ -78,9 +82,10 @@ export const computeEntityNameList = (
   entities: HomeAssistant["entities"],
   devices: HomeAssistant["devices"],
   areas: HomeAssistant["areas"],
-  floors: HomeAssistant["floors"]
+  floors: HomeAssistant["floors"],
+  localize?: LocalizeFunc
 ): (string | undefined)[] => {
-  const { device, area, floor } = getEntityContext(
+  const { device, area, floor, entity } = getEntityContext(
     stateObj,
     entities,
     devices,
@@ -98,6 +103,10 @@ export const computeEntityNameList = (
         return area ? computeAreaName(area) : undefined;
       case "floor":
         return floor ? computeFloorName(floor) : undefined;
+      case "integration":
+        return entity?.platform && localize
+          ? domainToName(localize, entity.platform)
+          : undefined;
       case "text":
         return item.text;
       default:

@@ -289,6 +289,142 @@ describe("computeEntityNameDisplay", () => {
     expect(result).toBe("Light");
   });
 
+  it("returns integration name", () => {
+    const stateObj = mockStateObj({ entity_id: "light.hue_bulb" });
+    const localize = (key: string) => {
+      if (key === "component.hue.title") {
+        return "Philips Hue";
+      }
+      return key;
+    };
+    const hass = {
+      entities: {
+        "light.hue_bulb": mockEntity({
+          entity_id: "light.hue_bulb",
+          name: "Bedroom Light",
+          platform: "hue",
+        }),
+      },
+      devices: {},
+      areas: {},
+      floors: {},
+    } as unknown as HomeAssistant;
+
+    const result = computeEntityNameDisplay(
+      stateObj,
+      { type: "integration" },
+      hass.entities,
+      hass.devices,
+      hass.areas,
+      hass.floors,
+      undefined,
+      localize
+    );
+
+    expect(result).toBe("Philips Hue");
+  });
+
+  it("returns platform as integration name when no translation exists", () => {
+    const stateObj = mockStateObj({ entity_id: "light.custom_bulb" });
+    const localize = (_key: string) => "";
+    const hass = {
+      entities: {
+        "light.custom_bulb": mockEntity({
+          entity_id: "light.custom_bulb",
+          name: "Custom Light",
+          platform: "custom_integration",
+        }),
+      },
+      devices: {},
+      areas: {},
+      floors: {},
+    } as unknown as HomeAssistant;
+
+    const result = computeEntityNameDisplay(
+      stateObj,
+      { type: "integration" },
+      hass.entities,
+      hass.devices,
+      hass.areas,
+      hass.floors,
+      undefined,
+      localize
+    );
+
+    expect(result).toBe("custom_integration");
+  });
+
+  it("returns empty string for integration when platform is missing", () => {
+    const stateObj = mockStateObj({ entity_id: "light.no_platform" });
+    const localize = (key: string) => key;
+    const hass = {
+      entities: {
+        "light.no_platform": mockEntity({
+          entity_id: "light.no_platform",
+          name: "Light",
+          // No platform specified
+        }),
+      },
+      devices: {},
+      areas: {},
+      floors: {},
+    } as unknown as HomeAssistant;
+
+    const result = computeEntityNameDisplay(
+      stateObj,
+      { type: "integration" },
+      hass.entities,
+      hass.devices,
+      hass.areas,
+      hass.floors,
+      undefined,
+      localize
+    );
+
+    expect(result).toBe("");
+  });
+
+  it("combines integration with area and entity names", () => {
+    const stateObj = mockStateObj({ entity_id: "light.hue_bulb" });
+    const localize = (key: string) => {
+      if (key === "component.hue.title") {
+        return "Philips Hue";
+      }
+      return key;
+    };
+    const hass = {
+      entities: {
+        "light.hue_bulb": mockEntity({
+          entity_id: "light.hue_bulb",
+          name: "Bulb",
+          platform: "hue",
+          area_id: "bedroom",
+        }),
+      },
+      devices: {},
+      areas: {
+        bedroom: mockArea({
+          area_id: "bedroom",
+          name: "Bedroom",
+        }),
+      },
+      floors: {},
+    } as unknown as HomeAssistant;
+
+    const result = computeEntityNameDisplay(
+      stateObj,
+      [{ type: "integration" }, { type: "area" }, { type: "entity" }],
+      hass.entities,
+      hass.devices,
+      hass.areas,
+      hass.floors,
+      undefined,
+      localize
+    );
+
+    expect(result).toBe("Philips Hue Bedroom Bulb");
+  });
+
   it("mixes text with entity types", () => {
     const stateObj = mockStateObj({ entity_id: "light.kitchen" });
     const hass = {
@@ -404,5 +540,45 @@ describe("computeEntityNameList", () => {
     );
 
     expect(result).toEqual([undefined, undefined, undefined]);
+  });
+
+  it("returns integration name in list", () => {
+    const stateObj = mockStateObj({ entity_id: "light.hue_bulb" });
+    const localize = (key: string) => {
+      if (key === "component.hue.title") {
+        return "Philips Hue";
+      }
+      return key;
+    };
+    const hass = {
+      entities: {
+        "light.hue_bulb": mockEntity({
+          entity_id: "light.hue_bulb",
+          name: "Bedroom Light",
+          platform: "hue",
+          area_id: "bedroom",
+        }),
+      },
+      devices: {},
+      areas: {
+        bedroom: mockArea({
+          area_id: "bedroom",
+          name: "Bedroom",
+        }),
+      },
+      floors: {},
+    } as unknown as HomeAssistant;
+
+    const result = computeEntityNameList(
+      stateObj,
+      [{ type: "integration" }, { type: "area" }, { type: "entity" }],
+      hass.entities,
+      hass.devices,
+      hass.areas,
+      hass.floors,
+      localize
+    );
+
+    expect(result).toEqual(["Philips Hue", "Bedroom", "Bedroom Light"]);
   });
 });

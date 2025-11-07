@@ -664,9 +664,11 @@
             "area": "Area",
             "device": "Device",
             "entity": "Entity",
+            "integration": "Integration",
             "area_missing": "No area assigned",
             "floor_missing": "No floor assigned",
-            "device_missing": "No related device"
+            "device_missing": "No related device",
+            "integration_missing": "No integration"
           },
           "add": "Add",
           "custom_name": "Custom name"
