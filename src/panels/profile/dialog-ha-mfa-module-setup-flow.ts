@@ -123,18 +123,20 @@ class HaMfaModuleSetupFlow extends LitElement {
                             this._step!.description_placeholders
                           )}
                         ></ha-markdown>
-                        <ha-form
-                          autofocus
-                          .hass=${this.hass}
-                          .data=${this._stepData}
-                          .schema=${autocompleteLoginFields(
-                            this._step.data_schema
-                          )}
-                          .error=${this._step.errors}
-                          .computeLabel=${this._computeLabel}
-                          .computeError=${this._computeError}
-                          @value-changed=${this._stepDataChanged}
-                        ></ha-form>`
+                        <form @submit=${this._preventDefault}>
+                          <ha-form
+                            autofocus
+                            .hass=${this.hass}
+                            .data=${this._stepData}
+                            .schema=${autocompleteLoginFields(
+                              this._step.data_schema
+                            )}
+                            .error=${this._step.errors}
+                            .computeLabel=${this._computeLabel}
+                            .computeError=${this._computeError}
+                            @value-changed=${this._stepDataChanged}
+                          ></ha-form>
+                        </form>`
                     : ""}`}
         </div>
         <ha-dialog-footer slot="footer">
@@ -220,6 +222,10 @@ class HaMfaModuleSetupFlow extends LitElement {
 
   private _stepDataChanged(ev: CustomEvent) {
     this._stepData = ev.detail.value;
+  }
+
+  private _preventDefault(ev: Event): void {
+    ev.preventDefault();
   }
 
   private _submitStep() {

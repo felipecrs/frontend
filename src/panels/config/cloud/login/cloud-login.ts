@@ -65,7 +65,7 @@ export class CloudLogin extends LitElement {
 
   private _renderLoginForm() {
     return html`
-      <div class="card-content login-form">
+      <form class="card-content login-form" @submit=${this._preventDefault}>
         ${this._error
           ? html`<ha-alert alert-type="error">${this._error}</ha-alert>`
           : nothing}
@@ -102,7 +102,7 @@ export class CloudLogin extends LitElement {
             `ui.panel.${this.translationKeyPanel}.login.password_error_msg`
           )}
         ></ha-input>
-      </div>
+      </form>
       <div class="card-actions">
         <ha-button
           appearance="plain"
@@ -122,6 +122,10 @@ export class CloudLogin extends LitElement {
         >
       </div>
     `;
+  }
+
+  private _preventDefault(ev: Event): void {
+    ev.preventDefault();
   }
 
   private _keyDown(ev: KeyboardEvent) {

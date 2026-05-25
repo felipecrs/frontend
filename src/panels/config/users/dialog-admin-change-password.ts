@@ -72,6 +72,10 @@ class DialogAdminChangePassword extends LitElement {
     this._open = false;
   }
 
+  private _preventDefault(ev: Event): void {
+    ev.preventDefault();
+  }
+
   private _dialogClosed(): void {
     this._params = undefined;
     this._userId = undefined;
@@ -137,17 +141,19 @@ class DialogAdminChangePassword extends LitElement {
               </ha-dialog-footer>
             `
           : html`
-              <ha-form
-                autofocus
-                .hass=${this.hass}
-                .data=${this._data}
-                .error=${this._error}
-                .schema=${SCHEMA}
-                .computeLabel=${this._computeLabel}
-                .computeError=${this._computeError}
-                @value-changed=${this._valueChanged}
-                .disabled=${this._submitting}
-              ></ha-form>
+              <form @submit=${this._preventDefault}>
+                <ha-form
+                  autofocus
+                  .hass=${this.hass}
+                  .data=${this._data}
+                  .error=${this._error}
+                  .schema=${SCHEMA}
+                  .computeLabel=${this._computeLabel}
+                  .computeError=${this._computeError}
+                  @value-changed=${this._valueChanged}
+                  .disabled=${this._submitting}
+                ></ha-form>
+              </form>
               <ha-dialog-footer slot="footer">
                 <ha-button
                   slot="secondaryAction"

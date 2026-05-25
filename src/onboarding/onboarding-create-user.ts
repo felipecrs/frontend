@@ -66,15 +66,17 @@ class OnboardingCreateUser extends LitElement {
         ? html`<ha-alert alert-type="error">${this._errorMsg}</ha-alert>`
         : ""}
 
-      <ha-form
-        .computeLabel=${this._computeLabel(this.localize)}
-        .computeHelper=${this._computeHelper(this.localize)}
-        .data=${this._newUser}
-        .disabled=${this._loading}
-        .error=${this._formError}
-        .schema=${CREATE_USER_SCHEMA}
-        @value-changed=${this._handleValueChanged}
-      ></ha-form>
+      <form @submit=${this._preventDefault}>
+        <ha-form
+          .computeLabel=${this._computeLabel(this.localize)}
+          .computeHelper=${this._computeHelper(this.localize)}
+          .data=${this._newUser}
+          .disabled=${this._loading}
+          .error=${this._formError}
+          .schema=${CREATE_USER_SCHEMA}
+          @value-changed=${this._handleValueChanged}
+        ></ha-form>
+      </form>
       <div class="footer">
         <ha-button
           @click=${this._submitForm}
@@ -106,6 +108,10 @@ class OnboardingCreateUser extends LitElement {
         this._submitForm(ev);
       }
     });
+  }
+
+  private _preventDefault(ev: Event): void {
+    ev.preventDefault();
   }
 
   private _computeLabel(localize) {

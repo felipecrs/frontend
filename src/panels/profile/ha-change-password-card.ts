@@ -46,51 +46,55 @@ class HaChangePasswordCard extends LitElement {
             ? html`<ha-alert alert-type="success">${this._statusMsg}</ha-alert>`
             : ""}
 
-          <ha-input
-            id="currentPassword"
-            type="password"
-            password-toggle
-            name="currentPassword"
-            .label=${this.hass.localize(
-              "ui.panel.profile.change_password.current_password"
-            )}
-            autocomplete="current-password"
-            .value=${this._currentPassword}
-            @input=${this._currentPasswordChanged}
-            @change=${this._currentPasswordChanged}
-            required
-          ></ha-input>
+          <form @submit=${this._preventDefault}>
+            <ha-input
+              id="current-password"
+              type="password"
+              password-toggle
+              name="current-password"
+              .label=${this.hass.localize(
+                "ui.panel.profile.change_password.current_password"
+              )}
+              autocomplete="current-password"
+              .value=${this._currentPassword}
+              @input=${this._currentPasswordChanged}
+              @change=${this._currentPasswordChanged}
+              required
+            ></ha-input>
 
-          ${this._currentPassword
-            ? html`<ha-input
-                  type="password"
-                  password-toggle
-                  .label=${this.hass.localize(
-                    "ui.panel.profile.change_password.new_password"
-                  )}
-                  name="password"
-                  autocomplete="new-password"
-                  .value=${this._password}
-                  @input=${this._newPasswordChanged}
-                  @change=${this._newPasswordChanged}
-                  required
-                  autoValidate
-                ></ha-input>
-                <ha-input
-                  type="password"
-                  password-toggle
-                  .label=${this.hass.localize(
-                    "ui.panel.profile.change_password.confirm_new_password"
-                  )}
-                  name="passwordConfirm"
-                  autocomplete="new-password"
-                  .value=${this._passwordConfirm}
-                  @input=${this._newPasswordConfirmChanged}
-                  @change=${this._newPasswordConfirmChanged}
-                  required
-                  autoValidate
-                ></ha-input>`
-            : ""}
+            ${this._currentPassword
+              ? html`<ha-input
+                    id="new-password"
+                    type="password"
+                    password-toggle
+                    .label=${this.hass.localize(
+                      "ui.panel.profile.change_password.new_password"
+                    )}
+                    name="new-password"
+                    autocomplete="new-password"
+                    .value=${this._password}
+                    @input=${this._newPasswordChanged}
+                    @change=${this._newPasswordChanged}
+                    required
+                    autoValidate
+                  ></ha-input>
+                  <ha-input
+                    id="confirm-new-password"
+                    type="password"
+                    password-toggle
+                    .label=${this.hass.localize(
+                      "ui.panel.profile.change_password.confirm_new_password"
+                    )}
+                    name="confirm-new-password"
+                    autocomplete="new-password"
+                    .value=${this._passwordConfirm}
+                    @input=${this._newPasswordConfirmChanged}
+                    @change=${this._newPasswordConfirmChanged}
+                    required
+                    autoValidate
+                  ></ha-input>`
+              : ""}
+          </form>
         </div>
 
         <div class="card-actions">
@@ -105,6 +109,10 @@ class HaChangePasswordCard extends LitElement {
         </div>
       </ha-card>
     `;
+  }
+
+  private _preventDefault(ev: Event): void {
+    ev.preventDefault();
   }
 
   private _currentPasswordChanged(ev) {
@@ -200,7 +208,7 @@ class HaChangePasswordCard extends LitElement {
     return [
       haStyle,
       css`
-        #currentPassword {
+        #current-password {
           margin-top: 0;
         }
         .card-actions {

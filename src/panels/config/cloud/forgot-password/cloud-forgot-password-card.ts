@@ -59,19 +59,23 @@ export class CloudForgotPasswordCard extends LitElement {
         ${this._error
           ? html`<ha-alert alert-type="error">${this._error}</ha-alert>`
           : nothing}
-        <ha-input
-          autofocus
-          id="email"
-          label=${this.localize(`ui.panel.${this.translationKeyPanel}.email`)}
-          .value=${this.email ?? ""}
-          type="email"
-          required
-          .disabled=${this._inProgress}
-          @keydown=${this._keyDown}
-          .validationMessage=${this.localize(
-            `ui.panel.${this.translationKeyPanel}.email_error_msg`
-          )}
-        ></ha-input>
+        <form @submit=${this._preventDefault}>
+          <ha-input
+            autofocus
+            id="email"
+            name="username"
+            label=${this.localize(`ui.panel.${this.translationKeyPanel}.email`)}
+            .value=${this.email ?? ""}
+            type="email"
+            autocomplete="username"
+            required
+            .disabled=${this._inProgress}
+            @keydown=${this._keyDown}
+            .validationMessage=${this.localize(
+              `ui.panel.${this.translationKeyPanel}.email_error_msg`
+            )}
+          ></ha-input>
+        </form>
       </div>
       <div class="card-actions">
         <ha-progress-button
@@ -84,6 +88,10 @@ export class CloudForgotPasswordCard extends LitElement {
         </ha-progress-button>
       </div>
     `;
+  }
+
+  private _preventDefault(ev: Event): void {
+    ev.preventDefault();
   }
 
   private _keyDown(ev: KeyboardEvent) {

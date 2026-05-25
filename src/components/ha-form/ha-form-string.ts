@@ -56,6 +56,7 @@ export class HaFormString extends LitElement implements HaFormElement {
         .name=${this.schema.name}
         .autofocus=${!!this.schema.autofocus}
         .autocomplete=${this.schema.autocomplete}
+        .inputmode=${this.otpInputMode}
         .validationMessage=${this.schema.required
           ? this.localize?.("ui.common.error_required")
           : undefined}
@@ -102,6 +103,10 @@ export class HaFormString extends LitElement implements HaFormElement {
 
   protected get isPassword(): boolean {
     return MASKED_FIELDS.some((field) => this.schema.name.includes(field));
+  }
+
+  private get otpInputMode(): "numeric" | undefined {
+    return this.schema.autocomplete === "one-time-code" ? "numeric" : undefined;
   }
 
   static styles = css`

@@ -95,12 +95,13 @@ export class DialogAddUser extends LitElement {
         )}
         @closed=${this._dialogClosed}
       >
-        <div>
+        <form @submit=${this._preventDefault}>
           ${this._error ? html` <div class="error">${this._error}</div> ` : ""}
           ${this._allowChangeName
             ? html`<ha-input
                 class="name"
                 name="name"
+                autocomplete="name"
                 .label=${this.hass.localize(
                   "ui.panel.config.users.editor.name"
                 )}
@@ -110,6 +111,7 @@ export class DialogAddUser extends LitElement {
                   "ui.common.error_required"
                 )}
                 @input=${this._handleValueChanged}
+                @change=${this._handleValueChanged}
                 @blur=${this._maybePopulateUsername}
                 autofocus
               ></ha-input>`
@@ -122,7 +124,9 @@ export class DialogAddUser extends LitElement {
             )}
             .value=${this._username}
             required
+            autocomplete="username"
             @input=${this._handleValueChanged}
+            @change=${this._handleValueChanged}
             .validationMessage=${this.hass.localize("ui.common.error_required")}
             ?autofocus=${!this._allowChangeName}
           ></ha-input>
@@ -134,9 +138,12 @@ export class DialogAddUser extends LitElement {
               "ui.panel.config.users.add_user.password"
             )}
             name="password"
+            id="new-password"
             .value=${this._password}
             required
+            autocomplete="new-password"
             @input=${this._handleValueChanged}
+            @change=${this._handleValueChanged}
             .validationMessage=${this.hass.localize("ui.common.error_required")}
           ></ha-input>
 
@@ -148,7 +155,9 @@ export class DialogAddUser extends LitElement {
             )}
             name="passwordConfirm"
             .value=${this._passwordConfirm}
+            autocomplete="new-password"
             @input=${this._handleValueChanged}
+            @change=${this._handleValueChanged}
             required
             .invalid=${this._password !== "" &&
             this._passwordConfirm !== "" &&
@@ -198,7 +207,7 @@ export class DialogAddUser extends LitElement {
                 </ha-alert>
               `
             : nothing}
-        </div>
+        </form>
 
         <ha-dialog-footer slot="footer">
           <ha-button
@@ -243,6 +252,10 @@ export class DialogAddUser extends LitElement {
     if (parts.length) {
       this._username = parts[0].toLowerCase();
     }
+  }
+
+  private _preventDefault(ev: Event): void {
+    ev.preventDefault();
   }
 
   private _handleValueChanged(ev: ValueChangedEvent<string>): void {
